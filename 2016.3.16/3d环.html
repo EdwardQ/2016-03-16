@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<style>
+	*{ margin:0; padding:0; }
+	html,body{ overflow:hidden; }
+	body{ background:#000;  }
+	.box{ width:133px; height:200px; position:absolute; left:50%; margin-left:-66px; margin-top:150px; -webkit-transform-style:preserve-3d; -webkit-transform:perspective(1000px) rotateX(-10deg); }
+	.box div{ width:133px; height:200px; position:absolute; top:0; left:0; box-shadow:0 0 10px #fff; border-radius:3px;  }
+	.box div .over{ width:100%; height:100%;  position:absolute; top:215px; -webkit-transform:scale(1,-1);
+	-webkit-mask:-webkit-linear-gradient(rgba(0,0,0,0) 50%,rgba(0,0,0,0.5)); }	
+	#plane{ width:1200px; height:1200px; background:-webkit-radial-gradient(center center,rgba(50,50,50,1), rgba(0,0,0,0));  position:absolute; top:0; left:0; margin-top:-600px; margin-left:-600px; -webkit-transform:perspective(800px) rotateX(-90deg); border-radius:50%; box-shadow:0 0 0 #fff; }
+</style>
+<script>
+	document.addEventListener('DOMContentLoaded',function(){
+		var oBox=document.querySelector('.box');
+		var N=11;
+	
+		for(var i=0;i<N;i++){
+			var oNew=document.createElement('div');
+			oNew.style.background='url(img2/'+(i+1)+'.jpg) no-repeat';
+			oNew.innerHTML='<span class="over" style="background:url(img2/'+(i+1)+'.jpg) no-repeat"></span>'
+			oBox.appendChild(oNew);
+			oNew.style.WebkitTransition='1s all ease '+(N-i)*100+'ms';
+			(function(oNew,i){
+				setTimeout(function(){
+					oNew.style.WebkitTransform='rotateY('+i*360/N+'deg) translateZ(350px)';
+					
+				},0);
+			})(oNew,i);
+		}
+		var y=0;
+		var x=0;
+		var lastX=0;
+		var lastY=0;
+		var aDiv=oBox.children;
+		document.onmousedown=function(ev){
+			var oEvent=ev||event;
+			var disY=oEvent.clientY-x;
+			var disX=oEvent.clientX-y;
+			document.onmousemove=function(ev){
+				var oEvent=ev||event;
+				y=oEvent.clientX-disX;
+				x=oEvent.clientY-disY;
+				oBox.style.WebkitTransform='perspective(1000px) rotateX('+-x/10+'deg) rotateY('+y/10+'deg)';		
+				iSpeedX=oEvent.clientX-lastX;
+				lastX=oEvent.clientX;
+				iSpeedY=oEvent.clientY-lastY;
+				lastY=oEvent.clientY;
+				/*
+				for(var i=0;i<aDiv.length/2;i++){
+					aDiv[N-i-1].style.opacity=aDiv[i].style.opacity=1-((y/10)%360+i*360/N)/360;
+					
+				}*/
+			};
+			document.onmouseup=function(){
+				
+				document.onmousemove=null;
+				document.onmouseup=null;
+				oBox.timer=setInterval(function(){
+					iSpeedX*=0.9;
+					iSpeedY*=0.9;
+					x+=iSpeedY;
+					y+=iSpeedX;
+					oBox.style.WebkitTransform='perspective(1000px) rotateX('+-x/10+'deg) rotateY('+y/10+'deg)';			if(Math.abs(iSpeedX)<1)iSpeedX=0;
+				if(Math.abs(iSpeedY)<1)iSpeedY=0;
+				if(iSpeedX==0&&iSpeedY==0){
+					clearInterval(oBox.timer);	
+				}	
+						
+				},30);	
+			};
+			return false;
+		};
+		/*oBox.addEventListenr('transitionend',function(){
+			for(var i=0;i<aDiv.length;i++){
+				aDiv[i].style.opacity=;	
+			}	
+		},false);*/
+		
+	},false);
+</script>	
+</head>
+
+<body>
+<div class="box">
+</div>
+</body>
+</html>

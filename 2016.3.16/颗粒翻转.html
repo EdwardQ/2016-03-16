@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<style>
+	*{ margin:0; padding:0; }
+	.box{ width:700px; height:400px; position:relative; margin:100px auto; }
+	.box span{ position:absolute; -webkit-transform-style:preserve-3d; -webkit-transform:perspective(800px) rotateY(0); }
+	span em{ width:100%; height:100%; position:absolute; }
+	span .front{ background:url(img/1.jpg) no-repeat; -webkit-transition:translateZ(1px); }
+	span .back{ background:url(img/2.jpg) no-repeat; -webkit-transform:scale(-1,1) translateZ(-1px); }
+</style>
+<script>
+	document.addEventListener('DOMContentLoaded',function(){
+		var oBox=document.querySelector('.box');
+		var R=7;
+		var C=4;
+		for(var i=0;i<R;i++){
+			for(var j=0;j<C;j++){
+				var oS=document.createElement('span');
+				oS.style.width=oBox.offsetWidth/R+'px';
+				oS.style.height=oBox.offsetHeight/C+'px';
+				oS.innerHTML='<em class="front"></em><em class="back"></em>';
+				oBox.appendChild(oS);
+				oS.style.left=i*oS.offsetWidth+'px';
+				oS.style.top=j*oS.offsetHeight+'px';
+				var oFront=oS.children[0];
+				var oBack=oS.children[1];
+				oFront.style.backgroundPosition=-oS.offsetLeft+'px -'+oS.offsetTop+'px';
+				oBack.style.backgroundPosition=-oS.offsetLeft+'px -'+oS.offsetTop+'px';
+				oS.c=j;
+				oS.r=i;
+			}	
+		}
+		var aS=document.querySelectorAll('span');
+		var iNow=0;
+		var bOk=false;
+		oBox.onclick=function(){
+			if(bOk)return;
+			bOk=true;
+			iNow++;
+			for(var i=0;i<aS.length;i++){
+				aS[i].style.WebkitTransition='1s all ease '+(aS[i].c+aS[i].r)*100+'ms';
+				aS[i].style.WebkitTransform='perspective(800px) rotateY(180deg)';	
+			}	
+			aS[aS.length-1].addEventListener('transitionend',function(){
+				for(var i=0;i<aS.length;i++){
+					aS[i].style.WebkitTransition='none';
+					aS[i].style.WebkitTransform='perspective(800px) rotateY(0deg)';
+					var oFront=aS[i].children[0];
+					var oBack=aS[i].children[1];
+					oFront.style.backgroundImage='url(img/'+(iNow%3+1)+'.jpg)';
+					oBack.style.backgroundImage='url(img/'+((iNow+1)%3+1)+'.jpg)';	
+				}	
+				bOk=false;
+			},false);
+		};
+			
+	},false);
+</script>
+</head>
+
+<body>
+<div class="box">
+	
+</div>
+</body>
+</html>
